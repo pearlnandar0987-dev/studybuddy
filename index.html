@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudyBuddy - Study Planner</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6fb;
+      color: #202744;
+    }
+
+    header {
+      background: #ffffff;
+      padding: 20px;
+      border-bottom: 1px solid #e5e8f0;
+    }
+
+    .header-inner, main {
+      max-width: 760px;
+      margin: auto;
+    }
+
+    header h1 {
+      margin: 0;
+      color: #5265d8;
+      font-size: 25px;
+    }
+
+    header p {
+      margin-bottom: 0;
+      color: #727b91;
+    }
+
+    main { padding: 28px 18px; }
+
+    .welcome { margin-bottom: 24px; }
+    .welcome h2 { margin-bottom: 8px; }
+    .welcome p { color: #727b91; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .stat, .panel {
+      background: white;
+      padding: 18px;
+      border-radius: 14px;
+      box-shadow: 0 3px 15px #2027440a;
+    }
+
+    .stat span {
+      display: block;
+      color: #727b91;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .stat strong { font-size: 25px; }
+
+    .panel h3 { margin-top: 0; }
+
+    form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    input, button { font: inherit; }
+
+    input {
+      min-width: 0;
+      flex: 1;
+      padding: 13px;
+      border: 1px solid #dce1ed;
+      border-radius: 9px;
+      outline-color: #5265d8;
+    }
+
+    button {
+      border: none;
+      border-radius: 9px;
+      padding: 12px 15px;
+      cursor: pointer;
+    }
+
+    .add-btn {
+      background: #5265d8;
+      color: white;
+      font-weight: bold;
+    }
+
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 18px 0;
+    }
+
+    .filter {
+      background: #f0f2f8;
+      color: #424c67;
+    }
+
+    .filter.active {
+      background: #5265d8;
+      color: white;
+    }
+
+    #taskList {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .task {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid #edf0f5;
+    }
+
+    .task input {
+      flex: none;
+      width: 18px;
+      height: 18px;
+      accent-color: #5265d8;
+    }
+
+    .task-text {
+      flex: 1;
+      overflow-wrap: anywhere;
+    }
+
+    .task.done .task-text {
+      color: #9299aa;
+      text-decoration: line-through;
+    }
+
+    .delete-btn {
+      background: #fff0f0;
+      color: #c34444;
+      padding: 8px 10px;
+    }
+
+    #empty {
+      text-align: center;
+      color: #858da0;
+      padding: 28px 8px;
+    }
+
+    .note {
+      color: #858da0;
+      font-size: 12px;
+      line-height: 1.6;
+      margin-top: 20px;
+    }
+
+    footer {
+      text-align: center;
+      color: #858da0;
+      padding: 24px 12px;
+      font-size: 13px;
+    }
+
+    @media (max-width: 480px) {
+      .stats { gap: 7px; }
+      .stat { padding: 12px 9px; }
+      .stat strong { font-size: 21px; }
+      form { flex-direction: column; }
+      .add-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <h1>StudyBuddy 📚</h1>
+      <p>Your little space to plan and learn.</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="welcome">
+      <h2>Let's make today productive! ✨</h2>
+      <p>Add your study tasks and complete them one by one.</p>
+    </section>
+
+    <section class="stats">
+      <div class="stat">
+        <span>Total Tasks</span>
+        <strong id="total">0</strong>
+      </div>
+      <div class="stat">
+        <span>Completed</span>
+        <strong id="completed">0</strong>
+      </div>
+      <div class="stat">
+        <span>Remaining</span>
+        <strong id="remaining">0</strong>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>My Study Tasks</h3>
+
+      <form id="taskForm">
+        <input
+          id="taskInput"
+          type="text"
+          maxlength="120"
+          placeholder="e.g. Study Data Structures"
+          aria-label="New study task"
+          required
+        >
+        <button class="add-btn" type="submit">+ Add Task</button>
+      </form>
+
+      <div class="filters" aria-label="Filter tasks">
+        <button class="filter active" data-filter="all">All</button>
+        <button class="filter" data-filter="active">To Do</button>
+        <button class="filter" data-filter="completed">Completed</button>
+      </div>
+
+      <ul id="taskList"></ul>
+      <p id="empty">No tasks yet. Add your first task!</p>
+
+      <p class="note">
+        Your tasks are saved in this browser on this device.
+        They are not shared with other users or synced between devices.
+      </p>
+    </section>
+  </main>
+
+  <footer>Made with ❤️ for students · StudyBuddy</footer>
+
+  <script>
+    const STORAGE_KEY = "studybuddy-tasks-v1";
+
+    const form = document.getElementById("taskForm");
+    const input = document.getElementById("taskInput");
+    const list = document.getElementById("taskList");
+    const empty = document.getElementById("empty");
+
+    let tasks = [];
+
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      const parsed = saved ? JSON.parse(saved) : [];
+      if (Array.isArray(parsed)) {
+        tasks = parsed.filter(task =>
+          task &&
+          typeof task.id === "string" &&
+          typeof task.text === "string" &&
+          typeof task.done === "boolean"
+        );
+      }
+    } catch (error) {
+      tasks = [];
+    }
+
+    let currentFilter = "all";
+
+    function saveTasks() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+      } catch (error) {
+        alert("Could not save tasks in this browser.");
+      }
+    }
+
+    function updateStats() {
+      const completed = tasks.filter(task => task.done).length;
+
+      document.getElementById("total").textContent = tasks.length;
+      document.getElementById("completed").textContent = completed;
+      document.getElementById("remaining").textContent =
+        tasks.length - completed;
+    }
+
+    function renderTasks() {
+      list.replaceChildren();
+
+      const visibleTasks = tasks.filter(task => {
+        if (currentFilter === "active") return !task.done;
+        if (currentFilter === "completed") return task.done;
+        return true;
+      });
+
+      visibleTasks.forEach(task => {
+        const item = document.createElement("li");
+        item.className = "task" + (task.done ? " done" : "");
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = task.done;
+        checkbox.setAttribute(
+          "aria-label",
+          "Mark " + task.text + " as completed"
+        );
+
+        checkbox.addEventListener("change", () => {
+          task.done = checkbox.checked;
+          saveTasks();
+          renderTasks();
+        });
+
+        const text = document.createElement("span");
+        text.className = "task-text";
+        text.textContent = task.text;
+
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "delete-btn";
+        deleteButton.textContent = "Delete";
+        deleteButton.setAttribute("aria-label", "Delete " + task.text);
+
+        deleteButton.addEventListener("click", () => {
+          tasks = tasks.filter(t => t.id !== task.id);
+          saveTasks();
+          renderTasks();
+        });
+
+        item.append(checkbox, text, deleteButton);
+        list.appendChild(item);
+      });
+
+      empty.hidden = visibleTasks.length > 0;
+      empty.textContent = tasks.length === 0
+        ? "No tasks yet. Add your first task!"
+        : "No tasks in this filter.";
+
+      updateStats();
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const text = input.value.trim();
+      if (!text) return;
+
+      tasks.unshift({
+        id: Date.now().toString() + Math.random().toString(36).slice(2),
+        text: text,
+        done: false
+      });
+
+      saveTasks();
+      currentFilter = "all";
+
+      document.querySelectorAll(".filter").forEach(button => {
+        button.classList.toggle("active", button.dataset.filter === "all");
+      });
+
+      form.reset();
+      renderTasks();
+      input.focus();
+    });
+
+    document.querySelectorAll(".filter").forEach(button => {
+      button.addEventListener("click", () => {
+        currentFilter = button.dataset.filter;
+
+        document.querySelectorAll(".filter").forEach(filterButton => {
+          filterButton.classList.toggle(
+            "active",
+            filterButton === button
+          );
+        });
+
+        renderTasks();
+      });
+    });
+
+    renderTasks();
+  </script>
+</body>
+</html>
